@@ -1,0 +1,367 @@
+---
+title: "Case Study: How Does a Bike-Share Navigate Speedy Success?"
+author: "Abel_sebhat"
+date: "2023-09-14"
+output: html_document
+---
+
+### Introduction
+
+Welcome to the Cyclistic bike-share analysis case study! You will work for a fictional company, Cyclistic.
+
+### Scenario 
+
+Cyclistic, a bike-share company in Chicago. The director of marketing believes the company’s future success depends on maximizing
+the number of annual memberships. Therefore, your team wants to understand how casual riders and annual members
+use Cyclistic bikes differently. From these insights, your team will design a new marketing strategy to convert casual 
+riders into annual members. But first, Cyclistic executives must approve your recommendations, so they must be backed up 
+with compelling data insights and professional data visualizations.
+
+### Characters and teams
+
+● Cyclistic: A bike-share program that features more than 5,800 bicycles and 600 docking stations. Cyclistic sets itself
+apart by also offering reclining bikes, hand tricycles, and cargo bikes, making bike-share more inclusive to people with
+disabilities and riders who can’t use a standard two-wheeled bike. The majority of riders opt for traditional bikes; about
+8% of riders use the assistive options. Cyclistic users are more likely to ride for leisure, but about 30% use them to
+commute to work each day.
+
+● Lily Moreno: The director of marketing and your manager. Moreno is responsible for the development of campaigns
+and initiatives to promote the bike-share program. These may include email, social media, and other channels.
+
+● Cyclistic marketing analytics team: A team of data analysts who are responsible for collecting, analyzing, and
+reporting data that helps guide Cyclistic marketing strategy. You joined this team six months ago and have been busy
+learning about Cyclistic’s mission and business goals — as well as how you, as a junior data analyst, can help Cyclistic
+achieve them.
+
+● Cyclistic executive team: The notoriously detail-oriented executive team will decide whether to approve the
+recommended marketing program.
+
+### About the company
+
+In 2016, Cyclistic launched a successful bike-share offering. Since then, the program has grown to a fleet of 5,824 bicycles
+that are geotracked and locked into a network of 692 stations across Chicago. The bikes can be unlocked from one station and
+returned to any other station in the system anytime.
+
+Until now, Cyclistic’s marketing strategy relied on building general awareness and appealing to broad consumer segments.
+One approach that helped make these things possible was the flexibility of its pricing plans: single-ride passes, full-day 
+passes, and annual memberships. Customers who purchase single-ride or full-day passes are referred to as customer riders. 
+Customers who purchase annual memberships are Cyclistic subscriber.
+
+Cyclistic’s finance analysts have concluded that subscribers are much more profitable than customer riders. Although the
+pricing flexibility helps Cyclistic attract more customers, Moreno believes that maximizing the number of annual members will
+be key to future growth. Rather than creating a marketing campaign that targets all-new customers, Moreno believes there is a
+very good chance to convert customer riders into subscribers. She notes that customer riders are already aware of the Cyclistic
+program and have chosen Cyclistic for their mobility needs.
+
+Moreno has set a clear goal: Design marketing strategies aimed at converting customer riders into subscriber. In order to
+do that, however, the marketing analyst team needs to better understand how subscribers and customer riders differ, why
+customer riders would buy a membership, and how digital media could affect their marketing tactics. Moreno and her team are
+interested in analyzing the Cyclistic historical bike trip data to identify trends.
+
+### Business task
+
+Three questions will guide the future marketing program:
+
+1. How do subscribers and customer riders use Cyclistic bikes differently?
+
+2. Why would customer riders buy Cyclistic annual memberships?
+
+3. How can Cyclistic use digital media to influence customer riders to become members?
+
+Moreno has assigned you the first question to answer: How do annual members and customer riders use Cyclistic bikes
+differently?
+
+### Data Sources
+
+For the purposes of this case study,the data sets are appropriate and will enable you to answer the business questions.
+The data has been made available by Motivate International Inc. under this [license](https://ride.divvybikes.com/data-license-agreement). 
+This is public data that you can use to explore how different customer types are using Cyclistic bikes. But note that data-privacy issues
+prohibit you from using riders’ personally identifiable information. This means that you won’t be able to connect pass purchases to
+credit card numbers to determine if casual riders live in the Cyclistic service area or if they have purchased multiple 
+single passes.
+
+Main source of data provided by [cyclistic company](https://divvy-tripdata.s3.amazonaws.com/index.html)
+
+### Loading pacakges
+```{r loading pacakges}
+library(tidyverse)
+library(here)
+library(skimr)
+library(janitor)
+```
+
+### Importing data from desktop
+```{r Importing data from desktop }
+Divvy_Trips_2019_Q1 <- read_csv("C:/Users/abela/OneDrive/Desktop/cyclistic case study/Divvy_Trips_2019_Q1.csv")
+Divvy_Trips_2019_Q2 <- read_csv("C:/Users/abela/OneDrive/Desktop/cyclistic case study/Divvy_Trips_2019_Q2.csv")
+Divvy_Trips_2019_Q3 <- read_csv("C:/Users/abela/OneDrive/Desktop/cyclistic case study/Divvy_Trips_2019_Q3.csv")
+Divvy_Trips_2019_Q4 <- read_csv("C:/Users/abela/OneDrive/Desktop/cyclistic case study/Divvy_Trips_2019_Q4.csv")
+```
+
+### Checking the data frame
+```{r Checking the data frame}
+colnames(Divvy_Trips_2019_Q1)
+colnames(Divvy_Trips_2019_Q2)
+colnames(Divvy_Trips_2019_Q3)
+colnames(Divvy_Trips_2019_Q4)
+head(Divvy_Trips_2019_Q1)
+head(Divvy_Trips_2019_Q2)
+head(Divvy_Trips_2019_Q3)
+head(Divvy_Trips_2019_Q4)
+```
+
+### Changing column names
+To make the data frame same i will change Divvy_Trips_2019_Q2 column names. 
+```{r Changing column names}
+colnames(Divvy_Trips_2019_Q2) <- c("trip_id", "start_time", "end_time", "bikeid", "tripduration", "from_station_id", "from_station_name", "to_station_id", "to_station_name", "usertype", "gender", "birthyear")
+colnames(Divvy_Trips_2019_Q2)
+```
+
+### Merging the four data frames into one 
+```{r Merging the four data frames into one }
+Divvy_Trips_2019 = bind_rows(Divvy_Trips_2019_Q1, Divvy_Trips_2019_Q2, Divvy_Trips_2019_Q3, Divvy_Trips_2019_Q4)
+View(Divvy_Trips_2019)
+```
+
+```{r}
+clean_names(Divvy_Trips_2019)
+```
+
+
+### inspect the new table
+```{r inspect the new table}
+colnames(Divvy_Trips_2019)
+summary(Divvy_Trips_2019)
+head(Divvy_Trips_2019)
+```
+
+### Checking for NA values
+```{r}
+sum(is.na(Divvy_Trips_2019$trip_id))
+sum(is.na(Divvy_Trips_2019$start_time))
+sum(is.na(Divvy_Trips_2019$end_time))
+sum(is.na(Divvy_Trips_2019$bikeid))
+sum(is.na(Divvy_Trips_2019$tripduration))
+sum(is.na(Divvy_Trips_2019$from_station_id))
+sum(is.na(Divvy_Trips_2019$from_station_name))
+sum(is.na(Divvy_Trips_2019$to_station_id))
+sum(is.na(Divvy_Trips_2019$to_station_name))
+sum(is.na(Divvy_Trips_2019$usertype))
+sum(is.na(Divvy_Trips_2019$gender))
+sum(is.na(Divvy_Trips_2019$birthyear))
+```
+Only two columns have na values.Gender have 559206 na values and birthyear have 538751 na values. This two columns
+will not affect the analysis. so i didn't remove them. They may be "optional" to to users to include those information.  
+
+
+### Adding four new columns
+Columns for date, day, months and day_of_week.
+First create date column to create the others columns from the date column.    
+```{r}
+Divvy_Trips_2019$date<- as.Date(Divvy_Trips_2019$start_time)
+Divvy_Trips_2019$day= format(as.Date(Divvy_Trips_2019$date), "%d")
+Divvy_Trips_2019$month= format(as.Date(Divvy_Trips_2019$date), "%b")
+Divvy_Trips_2019$day_of_week= format(as.Date(Divvy_Trips_2019$date), "%A")
+```
+
+### Adding rides starting hours column
+```{r}
+Divvy_Trips_2019<- Divvy_Trips_2019%>%
+  mutate(hour= hour(start_time))
+```
+
+### changing trip duration in to minutes 
+```{r}
+Divvy_Trips_2019 <- Divvy_Trips_2019 %>%
+  mutate(tripduration = difftime(end_time, start_time, units = "mins"))
+Divvy_Trips_2019$tripduration <- round(Divvy_Trips_2019$tripduration, digits = 1)
+```
+
+### Removing negative trip duration
+```{r}
+Divvy_Trips_2019 <- subset(Divvy_Trips_2019, tripduration >=0)
+```
+Thirteen rows with negative trip  duration removed. 
+
+### order week days and months
+```{r}
+Divvy_Trips_2019$day_of_week<- ordered(Divvy_Trips_2019$day_of_week,levels=c("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"))
+Divvy_Trips_2019$month<- ordered(Divvy_Trips_2019$month, levels= c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
+```
+
+## Data analysis 
+### Total number of rides in days of the weeks and months by user type 
+```{r}
+table(Divvy_Trips_2019$usertype, Divvy_Trips_2019$day_of_week)
+table(Divvy_Trips_2019$usertype, Divvy_Trips_2019$month)
+```
+The above table shows that cyclistic have more subscriber user type using bikes on every day of the weeks and months.
+
+### comparing subscriber and customers
+```{r}
+aggregate(Divvy_Trips_2019$tripduration ~ Divvy_Trips_2019$usertype, FUN = mean)
+aggregate(Divvy_Trips_2019$tripduration ~ Divvy_Trips_2019$usertype, FUN = median)
+aggregate(Divvy_Trips_2019$tripduration ~ Divvy_Trips_2019$usertype, FUN = max)
+aggregate(Divvy_Trips_2019$tripduration ~ Divvy_Trips_2019$usertype, FUN = min)
+```
+Based on the above comparison between subscriber and customer on trip duration the average customer uses more than subscribers. On average customer user type drives 57minutes while, subscribers drive 14minutes. The middle number on the data set for customer is 25.8minutes and for subscribers is 9.8minutes. The maximum trip duration for customer user type is 177200minutes and for subscribers is 150943minutes. It is 6.91% difference. The minimum trip duration for the customer is 1minutes and subscribers is 1minutes.     
+
+### Average ride time by each day for subscriber and customer
+```{r}
+aggregate(Divvy_Trips_2019$tripduration ~ Divvy_Trips_2019$usertype + Divvy_Trips_2019$day_of_week, FUN = mean)
+aggregate(Divvy_Trips_2019$tripduration ~ Divvy_Trips_2019$usertype + Divvy_Trips_2019$month, FUN = mean)
+```
+Based on days of the week the trip duration for user types, customer use cyclist bikes on average 55-60 minutes seven days. Slightly difference each days. subscribers use cyclist bikes weekdays on average 13-15 minutes each days. Based on months the trip duration for each user types, customer use cyclist bikes on average jan and jun are the lowest around 46minutes. Feb is the highest(more than 50% of the other months) on average 145minutes. Aug and Nov are the second highest around 67minutes. The other(mar, apr, may, jul, sep, oct and dec) on average 50-60minutes. Subscriber uses of the cyclist on average by months are around 11-16 minutes.   
+
+### Top three starting stations by user type
+
+```{r top three starting station by usertype }
+Divvy_Trips_2019 %>%
+  group_by(from_station_id, from_station_name, usertype)%>%
+  count(from_station_id) %>%
+  arrange(-n)
+```
+The top three starting stations by user types are station_id 35, 192, 77 station_names "streeter Dr & Grand Ave", "Canal St & Adams St", "Clinton St & Madison St" by user type "customer", "subscriber", "subscriber" with total starting of 53104, 50575, 45990 respectively. 
+The top three starting stations for customers are "streeter Dr & Grand Ave", "Lake Shore Dr & Monroe St" and "Millennium Park" with total ride starting of 53104, 39238 and 21749 respectively.  
+
+### Top three startings stations
+```{r top three startings}
+Divvy_Trips_2019 %>%
+  group_by(from_station_id, from_station_name)%>%
+  count(from_station_id) %>%
+  arrange(-n)
+```
+The top three starting stations are station id 35, 192, 77 with number of rides start by both user types 67983, 54389, 49908 respectively. The above three stations are most riders start using cyclistic bikes. 
+
+### Top three ending ride stations by user type
+```{r}
+Divvy_Trips_2019 %>%
+  group_by(to_station_id, to_station_name, usertype)%>%
+  count(to_station_id)%>%
+arrange(-n)
+```
+The top three ending stations by user types are station id 35, 91 & 192 station name "Streeter Dr & Grand Ave" , "Clinton St & Washington Blvd" and "Canal St & Adams St" user type customer, subscriber with total ending ride numbers 67585, 48193 & 47330 respectively. 
+The top three ending stations by customer user types are "Streeter Dr & Grand Ave", "Lake Shore Dr & Monroe St" and "Millennium Park" with ending ride number 67585, 30673 and 25215 respectively.
+
+### Top three ending stations
+```{r}
+Divvy_Trips_2019 %>%
+  group_by(to_station_id, to_station_name)%>%
+  count(to_station_id)%>%
+arrange(-n)
+```
+The top three ending stations are "Streeter Dr & Grand Ave", "Clinton St & Washington Blvd" and "Canal St & Adams St" with total ending ride of 
+81723, 50686 and 50127 respectively. 
+
+### Comparing user types by gender 
+```{r}
+Divvy_Trips_2019 %>%
+  group_by(gender, usertype) %>%
+  count(gender)
+```
+Cyclistic have 131439 female customers and 212742 male customers. The male are 38% more than females. The data set also have 536455 unknown customer genders and 22751 unknown subscriber genders.
+
+## visualization  
+### Total number of rides by day of weeks
+```{r}
+ggplot(data= Divvy_Trips_2019)+
+  geom_bar(mapping = aes(x=day_of_week, fill= usertype))+
+  facet_wrap(~usertype)+
+  labs(title = "Total number of rides of the week by user types", x= "day of week", y= "number of rides")+
+  theme(plot.title = element_text(hjust = 0.5, size = 16),
+        axis.text.x = element_text(angle = 45))
+```
+From the above graph we can see customer user type uses cyclistic bikes more on the weekends and less use on weekdays. On 
+the other hand subscriber user type use cyclistic bikes more on weekdays and less use on weekends. Since members tend to 
+use the bikes more on work days, these trends seem to support the assumption that a higher proportion of members use 
+the bikes to commute to and from work.
+
+### Total number of rides by  months
+```{r}
+ggplot(data = Divvy_Trips_2019)+
+  geom_bar(mapping = aes(x= month, fill= usertype))+
+  facet_wrap(~usertype)+
+  labs(title = "Total number of rides of the month by user types", y= "number of rides")+
+  theme(plot.title = element_text(hjust = 0.5, size = 16),
+        axis.text.x = element_text(angle = 45))
+```
+
+From the above graph we can see both user type ride more bikes on summer season. When the fall season start both
+user types usage of the bikes starts to decline. On the winter season customer user types using cyclistic bikes
+drop more than 87% and subscriber user type usage of bikes drop more than 60%. When the start spring season starts
+both user type usage slowly start rising.    
+
+### Average trip duration of the weeks by user type
+```{r message=FALSE, warning=FALSE}
+Divvy_Trips_2019%>%
+  group_by(usertype, day_of_week)%>%
+  summarise(average_tripduration = mean(tripduration))%>%
+  arrange(usertype, day_of_week)%>%
+  ggplot(aes(x= day_of_week, y= average_tripduration, fill= usertype))+
+  geom_col(position = "dodge")+ 
+  labs(title = "Average trip duration of the weeks by user type", x= "day of week", y= "average trip duartion")+
+  theme(plot.title = element_text(hjust = 0.5, size = 16))
+```
+
+From the above graph we can see that customer user type average trip duration is close to one hour all days of the week.
+On the other hand subscriber user type usage is on average 15 minutes. This shows that customer user type uses longer time.  
+
+### Averge trip duaration of the months by user type
+```{r message=FALSE}
+Divvy_Trips_2019%>%
+  group_by(usertype, month)%>%
+  summarise(average_tripduration = mean(tripduration))%>%
+  arrange(usertype, month)%>%
+  ggplot(aes(x= month, y= average_tripduration, fill= usertype))+
+  geom_col(position = "dodge")+
+  labs(title = "Average tirp duration of the months by user type", y= "average trip duration")+
+  theme(plot.title = element_text(hjust = 0.5, size = 16),
+        axis.text.x = element_text(angle = 45))
+```
+
+From the above we can see customer user type uses on average 50 to 60 minutes all over the year except 
+February. On February is shows a spike on average duration 145minutes. where as subscriber user type
+uses 11 to 16 minutes all over the year.
+
+### Rides by time of day
+```{r message=FALSE}
+Divvy_Trips_2019%>%
+  group_by(hour, usertype)%>%
+  summarise(n= n())%>%
+  ggplot()+
+  geom_line(aes(x= hour, y= n, color= usertype))+
+  labs(title = "Rides by time of day", y= "number of rides")+
+  theme(plot.title = element_text(hjust = 0.5, size = 16))
+```
+
+From the above chart we can see subscriber user type a spike usage of bikes from 6am to 8am in the morning 
+and from 3pm to 5pm in the afternoon. Where as customer user type usage is smooth from 10am to 5pm. 
+
+## Act
+
+Based on the cyclistic company trip data there are a total of 880,631 customer user type but the data didn't have user identifier.
+so, the total customer user type didn't refer to single users. I strongly recommend to give each users identifier number. Adding
+identifier to the data will benefit the company to know how many users the company have.
+
+My top three recommendations are:- 
+
+1. Promote the cyclistic company on summer time because more of customer user type use the bikes on summer. Summer time will be 
+more effective and can address more users. While promoting at summer time the promotions on weekends should be double because,
+the number of riders on the weekends are double comparing to weekdays. The campaign budget should be double for the weekends.
+
+2. The customer user type rides on average 57minutes. When promoting subscription we need to clearly tell the customer user type 
+how much money the can save for the long rides if they subscribe to cyclistic. 
+
+3. To get more engagement with customer user type the marketing campaign should target the top three starting and ending stations.
+
+
+
+
+
+
+
+
+
+
+
+
